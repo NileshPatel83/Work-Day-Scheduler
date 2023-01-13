@@ -21,18 +21,66 @@
   //
   // TODO: Add code to display the current date in the header of the page.
 
-const currentDate = '#currentDay';
 
+
+
+//DOM elements.
+let currentDateEl = $('#currentDay');
+let timeBlockContainerEl = $('#time-block-container');
+
+//Class names for DOM elements.
+let timeBlockElClasses = ['row', 'time-block'];
+const timeElClasses = ['col-2', 'col-md-1', 'hour', 'text-center', 'py-3'];
+const textAreaElClasses = ['col-8', 'col-md-10', 'description'];
+const saveBtnElClasses = ['btn', 'saveBtn', 'col-2', 'col-md-1'];
+const saveImageElClasses = ['fas', 'fa-save'];
+const pastClass = 'past';
+const presentClass = 'present';
+const futureClass = 'future';
+
+//Constants
+const visibleRows = 3;
+const standardWorkHours = ['9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM'];
 
 $(function () {
 
   //Displays current date in specific format.
   displayCurrentDate();
 
+  //Adds time block for standard working hours.
+  addTimeBlocks();
+
+
 });
+
+//Adds time block for standard working hours.
+function addTimeBlocks(){
+
+  standardWorkHours.forEach(stdHour =>{
+
+    //Converts standard working hour to 24 hour format.
+    let hour = getHour(stdHour);
+
+
+   
+  });
+}
+
+//Converts standard working hour to 24 hour format.
+function getHour(stdHour){
+
+  let array = stdHour.split(' ');
+  let hour = parseInt(array[0], 10);
+  let format = array[1];
+
+  if(format === 'PM' && hour !== 12)
+  hour += 12;
+
+  return hour;
+}
 
 //Displays current date in specific format.
 function displayCurrentDate(){
   let currentDay = dayjs().format('dddd, MMMM DD, YYYY');
-  $(currentDate).text(currentDay);
+  currentDateEl.text(currentDay);
 }
