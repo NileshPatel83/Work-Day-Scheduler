@@ -56,6 +56,7 @@ $(function () {
 //Adds time block for standard working hours.
 function addTimeBlocks(){
 
+  //Loops through each standard working hour.
   standardWorkHours.forEach(stdHour =>{
 
     //Converts standard working hour to 24 hour format.
@@ -64,46 +65,85 @@ function addTimeBlocks(){
     //Gets all classes including past, present or future for time element.
     let className = getClassName(hour);
 
+    //Creates a div element, sets the id and time block classes.
+    //This element represent the row for each time block.
+    let blockDivEl = $('<div>');
+    blockDivEl.attr('id', stdHour);
+    blockDivEl.addClass(className);
+
+    //Creates a div element, sets the value standard time and classes.
+    //This element represents the first column which shows the time.
+    let timeEl = $('<div>');
+    timeEl.text(stdHour);
+    timeEl.addClass(timeElClasses.join(' '));
     
+    //Creates text area element and sets classes and attribute (row height to 3).
+    //This element presents the text area for user to type the acticity.
+    let textAreaEl = $('<textarea>');
+    textAreaEl.addClass(textAreaElClasses.join(' '));
+    textAreaEl.attr('rows', visibleRows);
 
-    
+    //Creates a button element and sets classes and attribute.
+    //This element represents as save button.
+    let saveBtnEl = $('<button>');
+    saveBtnEl.addClass(saveBtnElClasses.join(' '));
+    saveBtnEl.attr('aria-label', 'save');
 
-    // let blockDivEl = $('<div>');
+    //Creates an iamge element for save button element and sets classes and attributes.
+    //Adds the image element to save button element.
+    let saveImageEl = $('<i>');
+    saveImageEl.addClass(saveImageElClasses.join(' '));
+    saveImageEl.attr('aria-hidden', 'true');
+    saveBtnEl.append(saveImageEl);
 
-    // let timeEl = $('<div>');
-    // timeEl.text(stdHour);
-    // timeEl.addClass(className);
+    //Append all columns (time, text area and save button) to time block row element.
+    blockDivEl.append(timeEl, textAreaEl, saveBtnEl);
 
-   
+    //Adds the time block row element to main time display container element.
+    timeBlockContainerEl.append(blockDivEl);
   });
 }
 
+//Gets all classes including past, present or future for time element.
 function getClassName(hour){
 
+  //Sets the default value to present class.
   let className = presentClass;
 
-  let currentHour = dayjs().format(H);
+  //Gets current time in 24 hour format.
+  let currentHour = dayjs().format('H');
 
-    if(hour < currentHour){
-      className = pastClass;
-    } else if (hour > currentHour){
-      className = futureClass;
-    }
+  //If time block is less thant current time then sets the class as past.
+  if(hour < currentHour){
+    className = pastClass;
 
-    timeBlockElClasses.push(className);
+  //If time block is more than current time, sets the class to future.
+  } else if (hour > currentHour){
+    className = futureClass;
+  }
 
-    return timeBlockElClasses.join(' ');
+  //Adds this class to time block class array.
+  timeBlockElClasses.push(className);
+
+  //Returns the class as string separated by space.
+  return timeBlockElClasses.join(' ');
 }
 
 //Converts standard working hour to 24 hour format.
 function getHour(stdHour){
 
+  //Splits the standard working time to time number (e.g. 9) and time format (e.g. AM).
   let array = stdHour.split(' ');
+
+  //Converts time to number.
   let hour = parseInt(array[0], 10);
+
+  //Gets the time format e.g. AM/ PM.
   let format = array[1];
 
-  if(format === 'PM' && hour !== 12)
-  hour += 12;
+  //If the time number is either 12 or time format is PM, then adds 12 to get 24 hour time number.
+  //e.g. 9am = 9, 12pm = 12, 2pm = 14.
+  if(format === 'PM' && hour !== 12) hour += 12;
 
   return hour;
 }
