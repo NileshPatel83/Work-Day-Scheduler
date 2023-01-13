@@ -61,9 +61,38 @@ function addTimeBlocks(){
     //Converts standard working hour to 24 hour format.
     let hour = getHour(stdHour);
 
+    //Gets all classes including past, present or future for time element.
+    let className = getClassName(hour);
+
+    
+
+    
+
+    // let blockDivEl = $('<div>');
+
+    // let timeEl = $('<div>');
+    // timeEl.text(stdHour);
+    // timeEl.addClass(className);
 
    
   });
+}
+
+function getClassName(hour){
+
+  let className = presentClass;
+
+  let currentHour = dayjs().format(H);
+
+    if(hour < currentHour){
+      className = pastClass;
+    } else if (hour > currentHour){
+      className = futureClass;
+    }
+
+    timeBlockElClasses.push(className);
+
+    return timeBlockElClasses.join(' ');
 }
 
 //Converts standard working hour to 24 hour format.
