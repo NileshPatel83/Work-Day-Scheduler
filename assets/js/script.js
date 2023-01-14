@@ -38,6 +38,9 @@ const pastClass = 'past';
 const presentClass = 'present';
 const futureClass = 'future';
 
+//Constant for key for local storage.
+const schKey = 'daySchedule';
+
 //Visit rows in text area.
 const visibleRows = 3;
 
@@ -62,20 +65,77 @@ $(function () {
 
 });
 
-// //Event handler for time block container and then get button target.
-// timeBlockContainerEl.on('click', '.saveBtn', processDayScheduler);
+//Event handler for save button in timeblock container.
+timeBlockContainerEl.on('click', '.saveBtn', processDayScheduler);
 
-// function processDayScheduler(event){
-//     event.preventDefault();
+function processDayScheduler(event){
+    event.preventDefault();
 
-//     let schIndex = parseInt($(this).attr(dataIndex));
+    //In current context, 'this' refers to the save button.
+    //Gets the value of attribure called 'data-index' of save button.
+    //This index is used to determine the time block index of the save button clicked.
+    let schIndex = parseInt($(this).attr(dataIndex));
 
-//     let time = timeBlockContainerEl.children().eq(schIndex).children('div').text();
+    //Gets the time value fron time block row using the index.
+    let time = timeBlockContainerEl.children().eq(schIndex).children('div').text();
     
-//     let schedule = timeBlockContainerEl.children().eq(schIndex).children('textarea').val();
-    
-// }
+    //Gets user schedule from time block row using the index.
+    let schedule = timeBlockContainerEl.children().eq(schIndex).children('textarea').val();
 
+    //Creates a schedule object from index, time and schedule values.
+    let currentSchedule = {
+      id: schIndex,
+      time: time,
+      schedule: schedule
+    }
+    
+    //Gets all schedules from local storage.
+    let schStorage = getLocalScheduleStorage();
+
+    //Adds the schedule to storage schedule id doesn't exist.
+    //Updates schedule value if the storage exist already.
+    schStorage = addUpdateScheduleStorage(schStorage, currentSchedule);
+
+    
+}
+
+//Adds the schedule to storage schedule id doesn't exist.
+//Updates schedule value if the storage exist already.
+function addUpdateScheduleStorage(schStorage, currentSchedule){
+
+  //Tries to find existing storage with same id.
+  let extSchedule = schStorage.find(obj => {return obj.id === currentSchedule.id});
+
+  //Tries to find the index of existing storage in schedule array.
+  let index = schStorage.indexOf(extSchedule);
+
+  //If the existing array is found, index value is greater than or eqaul to 0.
+  //In this case, removes the existing schedule from schedule array.
+  //If existing array is not found, index value is -1.
+  if(index !== -1){
+    schStorage.splice(index, 1);
+  }
+  
+  //Adds the new schedule to schedule array.
+  schStorage.push(currentSchedule);
+
+  //Returns the array by sorting it using id.
+  return schStorage.sort((firstEl, secondEl) => firstEl.id - secondEl.id);
+}
+
+//Gets all schedules from local storage.
+function getLocalScheduleStorage(){
+
+  let schStorage = [];
+
+  let storage = localStorage.getItem(schKey);   
+  if(storage !== null){
+      schStorage = JSON.parse(storage);
+  }
+
+  //Returns the storage.
+  return schStorage;
+}
 
 //Adds time block for standard working hours.
 function addTimeBlocks(){
