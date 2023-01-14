@@ -58,16 +58,29 @@ $(function () {
   //Adds time block for standard working hours.
   addTimeBlocks();
 
-  //TODO
-  //Display activities from local storage.
+  //Gets all schedules from local storage.
+  let schStorage = getLocalScheduleStorage();
 
-
-
+  //Display schedules from local storage.
+  displaySchedules(schStorage);
 });
 
 //Event handler for save button in timeblock container.
 timeBlockContainerEl.on('click', '.saveBtn', processDayScheduler);
 
+//Display schedules from local storage.
+function displaySchedules(schStorage){
+
+  //Loops through all schedules from local storage.
+  for (let i = 0; i < schStorage.length; i++) {
+
+    //Updates the value of schedule text in repsective time block row.
+    //Time block row is identified using storage id which matches the index of time block row.
+    timeBlockContainerEl.children().eq(schStorage[i].id).children('textarea').val(schStorage[i].schedule);    
+  }
+}
+
+//Processes current schedule.
 function processDayScheduler(event){
     event.preventDefault();
 
@@ -96,7 +109,15 @@ function processDayScheduler(event){
     //Updates schedule value if the storage exist already.
     schStorage = addUpdateScheduleStorage(schStorage, currentSchedule);
 
-    
+    //Saves all schedules to local storage.
+    saveSchedulsToLocalStorage(schStorage);
+}
+
+//Saves all schedules to local storage.
+function saveSchedulsToLocalStorage(schStorage){
+
+  //Stores all projects to local storage.
+  localStorage.setItem(schKey, JSON.stringify(schStorage));
 }
 
 //Adds the schedule to storage schedule id doesn't exist.
